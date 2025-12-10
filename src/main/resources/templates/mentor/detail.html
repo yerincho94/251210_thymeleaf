@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/common :: htmlHead(|멘토 상세 - ${mentor.name}|)}"></head>
+<body>
+<!-- 헤더 삽입 -->
+<header th:replace="~{fragments/common :: header}">헤더</header>
+
+    <main>
+        <h1>멘토 상세 정보</h1>
+        <!-- 멘토 카드 프래그먼트 사용 -->
+        <div th:replace="~{fragments/common :: mentorCard(${mentor})}">멘토 정보</div>
+
+        <section>
+            <h2>담당 멘티 목록</h2>
+
+            <p th:if="${mentor.mentees.isEmpty()}">
+                담당 멘티가 없습니다.
+            </p>
+
+            <ul th:unless="${mentor.mentees.isEmpty()}">
+                <li th:each="mentee : ${mentor.mentees}">
+                    <span th:text="${mentee.name}">멘티명</span>
+                    (<span th:text="${mentee.goal}">목표</span>)
+                    - <a th:href="@{/mentee/{id}(id=${mentee.id})}">상세보기</a>
+                </li>
+            </ul>
+        </section>
+
+        <p>
+            <a th:href="@{/mentor/list}">목록으로</a>
+            <a th:href="@{/mentor/{id}/edit(id=${mentor.id})}">수정</a>
+        </p>
+    </main>
+
+<footer th:replace="~{fragments/common :: footer}">푸터</footer>
+</body>
+</html>

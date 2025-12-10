@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<!--<head>
+    <meta charset="UTF-8">
+    <title th:text="${pageTitle}">멘토 목록</title>
+</head>-->
+<head th:replace="~{fragments/common :: htmlHead(${pageTitle})}">
+    <title>멘토 목록</title>
+</head>
+<body>
+    <h1 th:text="${pageTitle}">페이지 제목</h1>
+
+    <!-- 헤더 삽입 -->
+    <header th:replace="~{fragments/common :: header}">헤더 영역</header>
+<!--    <div th:insert="~{fragments/common :: header}"></div>-->
+
+    <!-- 멘토가 없을 때 -->
+    <div th:if="${#lists.isEmpty(mentors)}">
+        <p>등록된 멘토가 없습니다.</p>
+        <a th:href="@{/mentor/new}">첫 멘토 등록하기</a>
+    </div>
+
+<!--    <table border="1">-->
+    <table th:unless="${#lists.isEmpty(mentors)}" border="1">
+        <thead>
+            <tr>
+                <th>번호</th>
+                <th>이름</th>
+                <th>전문분야</th>
+<!--                <th>이메일</th>-->
+                <th>멘티 수</th>
+<!--                <th>등록일</th>-->
+                <th>관리</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- 멘토 목록이 비어있을 때 -->
+            <tr th:if="${#lists.isEmpty(mentors)}">
+                <td colspan="7">등록된 멘토가 없습니다.</td>
+            </tr>
+            <!-- 멘토 목록 반복 (다음 단계에서 상세히 다룸) -->
+            <tr th:each="mentor : ${mentors}">
+                <td th:text="${mentor.id}">1</td>
+                <td th:text="${mentor.name}">홍길동</td>
+<!--                <td th:text="${mentor.specialty}">백엔드</td>-->
+                <td>
+                    <!-- switch로 분야별 표시 -->
+                    <span th:switch="${mentor.specialty}">
+                        <span th:case="'백엔드'">🖥️ 백엔드</span>
+                        <span th:case="'프론트엔드'">🎨 프론트엔드</span>
+                        <span th:case="'풀스택'">⚡ 풀스택</span>
+                        <span th:case="*" th:text="${mentor.specialty}">기타</span>
+                    </span>
+                </td>
+                <!-- Elvis 연산자 (null 체크) -->
+<!--                <td th:text="${mentor.email ?: '없음'}">email@example.com</td>-->
+
+<!--                <td th:text="${#lists.size(mentor.mentees)}">0</td>-->
+                <td>
+                    <span th:if="${mentor.mentees.isEmpty()}">-</span>
+                    <span th:unless="${mentor.mentees.isEmpty()}"
+                          th:text="${#lists.size(mentor.mentees)} + '명'">3명</span>
+                </td>
+<!--                <td th:text="${#temporals.format(mentor.createdAt, 'yyyy-MM-dd')}">2024-01-01</td>-->
+                <td>
+                    <!-- 링크 표현식 @{...} -->
+                    <a th:href="@{/mentor/{id}(id=${mentor.id})}">상세</a>
+                    <a th:href="@{/mentor/{id}/edit(id=${mentor.id})}">수정</a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <p>
+        <!-- 링크 표현식 @{...} -->
+        <a th:href="@{/mentor/new}">새 멘토 등록</a>
+    </p>
+
+    <!-- 푸터 삽입 -->
+    <footer th:replace="~{fragments/common :: footer}">푸터 영역</footer>
+</body>
+</html>
